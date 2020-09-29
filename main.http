@@ -1,0 +1,26 @@
+@Host = http://127.0.0.1:10801
+
+GET {{Host}}/cats HTTP/1.1
+
+###
+
+POST {{Host}}/cats HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "Lucky1"
+}
+
+###
+
+PUT {{Host}}/cats/2 HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "LuckyOne"
+}
+
+###
+
+DELETE {{Host}}/cats/1 HTTP/1.1
+Content-Type: application/json
