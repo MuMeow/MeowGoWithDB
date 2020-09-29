@@ -25,7 +25,7 @@ func main() {
 		w.Write([]byte(`{"alive":true}`))
 	}).Methods("GET")
 
-	log.Print("running on :10801")
+	log.Print("running on :10800")
 
-	http.ListenAndServe(":10801", handlers.CORS(header, methods, origins, credentials)(r))
+	http.ListenAndServe(":10800", handlers.CORS(header, methods, origins, credentials)(r))
 }
