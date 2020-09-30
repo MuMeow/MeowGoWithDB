@@ -1,7 +1,7 @@
 package mckcat
 
 import (
-	cati "MeowGo/services/cat/interface"
+	cati "MeowGoWithDB/services/cat/interface"
 )
 
 var dbCat = make([]cati.Cat, 0)

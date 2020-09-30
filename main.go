@@ -1,7 +1,7 @@
 package main
 
 import (
-	cats "MeowGo/services/cat/controller"
+	cats "MeowGoWithDB/services/cat/controller"
 	"log"
 	"net/http"
 

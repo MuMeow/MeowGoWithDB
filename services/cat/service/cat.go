@@ -1,8 +1,8 @@
 package cats
 
 import (
-	cati "MeowGo/services/cat/interface"
-	mckcat "MeowGo/services/db/justmck"
+	cati "MeowGoWithDB/services/cat/interface"
+	mckcat "MeowGoWithDB/services/db/justmck"
 	"log"
 	"strconv"
 

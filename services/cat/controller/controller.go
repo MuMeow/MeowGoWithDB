@@ -1,7 +1,7 @@
 package controller
 
 import (
-	cats "MeowGo/services/cat/service"
+	cats "MeowGoWithDB/services/cat/service"
 
 	"github.com/gorilla/mux"
 )
