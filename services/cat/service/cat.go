@@ -10,7 +10,22 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"gorm.io/gorm"
 )
+
+//CatRepository struct
+type CatRepository struct {
+	Connection *gorm.DB
+}
+
+var repo CatRepository
+
+//InitCatRepository func
+func InitCatRepository(connection *gorm.DB) {
+	repo = CatRepository{
+		Connection: connection,
+	}
+}
 
 //GetAll Func
 func GetAll(w http.ResponseWriter, r *http.Request) {

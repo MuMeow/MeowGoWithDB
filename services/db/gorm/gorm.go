@@ -2,6 +2,7 @@ package gorm
 
 import (
 	"log"
+	"os"
 
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/driver/mysql"
@@ -27,7 +28,7 @@ func (cat *Cat) TableName() string {
 
 // ConnectDB func
 func ConnectDB() (connect *gorm.DB) {
-	connect, err := gorm.Open(mysql.Open("root:mostori1234@tcp(192.168.1.10:3306)/meow_test?charset=utf8&parseTime=True&loc=Local"), &gorm.Config{})
+	connect, err := gorm.Open(mysql.Open(os.Getenv("DB_ADDRESS")), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err.Error())
 	}

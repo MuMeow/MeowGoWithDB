@@ -9,6 +9,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
+func init() {
+
+}
+
 func main() {
 	r := mux.NewRouter()
 	header := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
