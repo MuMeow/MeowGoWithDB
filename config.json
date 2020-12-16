@@ -1,0 +1,12 @@
+{
+    "mysql": {
+        "type":"mysql",
+        "host":"192.168.1.10",
+        "port": "3306",
+        "username": "root",
+        "password": "mostori1234",
+        "dbname":"meow_test"
+    },
+    "port":":10800",
+    "timeout":5
+}

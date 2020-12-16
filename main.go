@@ -1,16 +1,28 @@
 package main
 
 import (
-	cats "MeowGoWithDB/services/cat/controller"
+	catc "MeowGoWithDB/services/cat/controller"
+	cats "MeowGoWithDB/services/cat/service"
+
+	_gorm "MeowGoWithDB/services/db/gorm"
+
 	"log"
 	"net/http"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/spf13/viper"
 )
 
 func init() {
 
+	viper.SetConfigFile(`config.json`)
+
+	err := viper.ReadInConfig()
+
+	if err != nil {
+		log.Print(err.Error())
+	}
 }
 
 func main() {
@@ -20,8 +32,17 @@ func main() {
 	origins := handlers.AllowedOrigins([]string{"*"})
 	credentials := handlers.AllowCredentials()
 
+	dbhost := viper.GetString("mysql.host")
+	dbport := viper.GetString("mysql.port")
+	dbusername := viper.GetString("mysql.username")
+	dbpassword := viper.GetString("mysql.password")
+	dbname := viper.GetString("mysql.dbname")
+
+	sqlConnection := _gorm.ConnectDB(dbusername + ":" + dbpassword + "@tcp(" + dbhost + ":" + dbport + ")/" + dbname)
+
 	cat := r.PathPrefix("/cats").Subrouter()
-	cats.Controller(cat)
+	catc.Controller(cat)
+	cats.InitCatRepository(sqlConnection)
 
 	r.HandleFunc("/health-check", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)

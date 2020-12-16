@@ -2,22 +2,24 @@ package gorm
 
 import (
 	"log"
-	"os"
 
-	uuid "github.com/satori/go.uuid"
+	"github.com/google/uuid"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 //Cat struct
 type Cat struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID        string `gorm:"column:id;primary_key" json:"id"`
+	Name      string `gorm:"column:name" json:"name"`
+	IsDeleted bool   `gorm:"default:false;column:isDeleted" json:"isDeleted"`
+	CreatedAt int64  `gorm:"column:createdAt;autoCreateTime:milli" json:"createdAt"`
+	UpdatedAt int64  `gorm:"column:updatedAt;autoUpdateTime:milli" json:"updatedAt"`
 }
 
 // BeforeCreate func
 func (cat *Cat) BeforeCreate(db *gorm.DB) error {
-	db.Statement.SetColumn("ID", uuid.NewV4().String())
+	cat.ID = uuid.New().String()
 	return nil
 }
 
@@ -27,8 +29,8 @@ func (cat *Cat) TableName() string {
 }
 
 // ConnectDB func
-func ConnectDB() (connect *gorm.DB) {
-	connect, err := gorm.Open(mysql.Open(os.Getenv("DB_ADDRESS")), &gorm.Config{})
+func ConnectDB(address string) (connect *gorm.DB) {
+	connect, err := gorm.Open(mysql.Open(address), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err.Error())
 	}

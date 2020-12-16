@@ -44,6 +44,7 @@ func GetByID(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		log.Print(err.Error())
+
 		return
 	}
 
