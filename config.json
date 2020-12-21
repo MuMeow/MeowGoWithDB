@@ -7,6 +7,5 @@
         "password": "mostori1234",
         "dbname":"meow_test"
     },
-    "port":":10800",
-    "timeout":5
+    "port":"10800"
 }

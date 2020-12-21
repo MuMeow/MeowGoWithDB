@@ -18,11 +18,12 @@ type CatRepository struct {
 	Connection *gorm.DB
 }
 
-var repo CatRepository
+//Repo for call Repository
+var Repo CatRepository
 
 //InitCatRepository func
 func InitCatRepository(connection *gorm.DB) {
-	repo = CatRepository{
+	Repo = CatRepository{
 		Connection: connection,
 	}
 }
@@ -30,9 +31,31 @@ func InitCatRepository(connection *gorm.DB) {
 //GetAll Func
 func GetAll(w http.ResponseWriter, r *http.Request) {
 
-	cats := mckcat.GetAll()
+	var result []cati.Cat
 
-	json.NewEncoder(w).Encode(cats)
+	Repo.Connection.Table("CattoHouse").Where("isDeleted = ?", false).Find(&result)
+
+	// This for relation fetch
+	// for index, data := range result {
+	// 	Repo.Connect.Table("relationTable").Where("id = ?",data.relationID).Find(&result[index].relation)
+	// }
+
+	json.NewEncoder(w).Encode(result)
+}
+
+//GetAllWithDeleted Func
+func GetAllWithDeleted(w http.ResponseWriter, r *http.Request) {
+
+	var result []cati.Cat
+
+	Repo.Connection.Table("CattoHouse").Find(&result)
+
+	// This for relation fetch
+	// for index, data := range result {
+	// 	Repo.Connect.Table("relationTable").Where("id = ?",data.relationID).Find(&result[index].relation)
+	// }
+
+	json.NewEncoder(w).Encode(result)
 }
 
 //GetByID Func
@@ -40,17 +63,14 @@ func GetByID(w http.ResponseWriter, r *http.Request) {
 
 	id := mux.Vars(r)["id"]
 
-	getID, err := strconv.Atoi(id)
+	var result cati.Cat
 
-	if err != nil {
-		log.Print(err.Error())
+	Repo.Connection.Table("CattoHouse").Where("isDeleted = ? AND id = ?", false, id).Find(&result)
 
-		return
-	}
+	// This for relation fetch
+	// 	Repo.Connect.Table("relationTable").Where("id = ?",result.relationID).Find(&result.relation)
 
-	cats := mckcat.GetByID(getID)
-
-	json.NewEncoder(w).Encode(cats)
+	json.NewEncoder(w).Encode(result)
 }
 
 //Create Func

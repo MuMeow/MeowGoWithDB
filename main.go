@@ -40,6 +40,14 @@ func main() {
 
 	sqlConnection := _gorm.ConnectDB(dbusername + ":" + dbpassword + "@tcp(" + dbhost + ":" + dbport + ")/" + dbname)
 
+	defer func() {
+		sql, err := sqlConnection.DB()
+		if err != nil {
+			log.Panic(err.Error())
+		}
+		sql.Close()
+	}()
+
 	cat := r.PathPrefix("/cats").Subrouter()
 	catc.Controller(cat)
 	cats.InitCatRepository(sqlConnection)
@@ -50,7 +58,7 @@ func main() {
 		w.Write([]byte(`{"alive":true}`))
 	}).Methods("GET")
 
-	log.Print("running on :10800")
+	log.Print("running on :" + viper.GetString("port"))
 
-	http.ListenAndServe(":10800", handlers.CORS(header, methods, origins, credentials)(r))
+	http.ListenAndServe(":"+viper.GetString("port"), handlers.CORS(header, methods, origins, credentials)(r))
 }
