@@ -2,9 +2,7 @@ package cats
 
 import (
 	cati "MeowGoWithDB/services/cat/interface"
-	mckcat "MeowGoWithDB/services/db/justmck"
 	"log"
-	"strconv"
 
 	"encoding/json"
 	"net/http"
@@ -70,7 +68,11 @@ func GetByID(w http.ResponseWriter, r *http.Request) {
 	// This for relation fetch
 	// 	Repo.Connect.Table("relationTable").Where("id = ?",result.relationID).Find(&result.relation)
 
-	json.NewEncoder(w).Encode(result)
+	if result.ID != "" {
+		json.NewEncoder(w).Encode(result)
+	} else {
+		json.NewEncoder(w).Encode(nil)
+	}
 }
 
 //Create Func
@@ -86,9 +88,11 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result := mckcat.Create(body)
+	Repo.Connection.Table("CattoHouse").Create(&body)
 
-	json.NewEncoder(w).Encode(result)
+	// result := mckcat.Create(body)
+
+	json.NewEncoder(w).Encode(body)
 }
 
 //Update Func
@@ -96,28 +100,19 @@ func Update(w http.ResponseWriter, r *http.Request) {
 
 	id := mux.Vars(r)["id"]
 
-	getID, err := strconv.Atoi(id)
-
-	if err != nil {
-		log.Print(err.Error())
-		return
-	}
-
 	getBody := json.NewDecoder(r.Body)
 
 	var body cati.Cat
 
-	err = getBody.Decode(&body)
+	err := getBody.Decode(&body)
 	if err != nil {
 		log.Print(err.Error())
 		return
 	}
 
-	body.ID = getID
+	Repo.Connection.Table("CattoHouse").Where("id = ?", id).Updates(body)
 
-	result := mckcat.Update(body, getID)
-
-	json.NewEncoder(w).Encode(result)
+	json.NewEncoder(w).Encode(body)
 }
 
 //Delete Func
@@ -125,14 +120,9 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 
 	id := mux.Vars(r)["id"]
 
-	getID, err := strconv.Atoi(id)
+	Repo.Connection.Table("CattoHouse").Where("id = ?", id).Updates(map[string]interface{}{
+		"isDeleted": true,
+	})
 
-	if err != nil {
-		log.Print(err.Error())
-		return
-	}
-
-	cats := mckcat.Delete(getID)
-
-	json.NewEncoder(w).Encode(cats)
+	w.Write([]byte(id))
 }
