@@ -1,23 +1,59 @@
 package cats
 
 import (
-	cati "MeowGo/services/cat/interface"
-	mckcat "MeowGo/services/db/justmck"
+	cati "MeowGoWithDB/services/cat/interface"
 	"log"
-	"strconv"
 
 	"encoding/json"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"gorm.io/gorm"
 )
+
+//CatRepository struct
+type CatRepository struct {
+	Connection *gorm.DB
+}
+
+//Repo for call Repository
+var Repo CatRepository
+
+//InitCatRepository func
+func InitCatRepository(connection *gorm.DB) {
+	Repo = CatRepository{
+		Connection: connection,
+	}
+}
 
 //GetAll Func
 func GetAll(w http.ResponseWriter, r *http.Request) {
 
-	cats := mckcat.GetAll()
+	var result []cati.Cat
 
-	json.NewEncoder(w).Encode(cats)
+	Repo.Connection.Table("CattoHouse").Where("isDeleted = ?", false).Find(&result)
+
+	// This for relation fetch
+	// for index, data := range result {
+	// 	Repo.Connect.Table("relationTable").Where("id = ?",data.relationID).Find(&result[index].relation)
+	// }
+
+	json.NewEncoder(w).Encode(result)
+}
+
+//GetAllWithDeleted Func
+func GetAllWithDeleted(w http.ResponseWriter, r *http.Request) {
+
+	var result []cati.Cat
+
+	Repo.Connection.Table("CattoHouse").Find(&result)
+
+	// This for relation fetch
+	// for index, data := range result {
+	// 	Repo.Connect.Table("relationTable").Where("id = ?",data.relationID).Find(&result[index].relation)
+	// }
+
+	json.NewEncoder(w).Encode(result)
 }
 
 //GetByID Func
@@ -25,16 +61,18 @@ func GetByID(w http.ResponseWriter, r *http.Request) {
 
 	id := mux.Vars(r)["id"]
 
-	getID, err := strconv.Atoi(id)
+	var result cati.Cat
 
-	if err != nil {
-		log.Print(err.Error())
-		return
+	Repo.Connection.Table("CattoHouse").Where("isDeleted = ? AND id = ?", false, id).Find(&result)
+
+	// This for relation fetch
+	// 	Repo.Connect.Table("relationTable").Where("id = ?",result.relationID).Find(&result.relation)
+
+	if result.ID != "" {
+		json.NewEncoder(w).Encode(result)
+	} else {
+		json.NewEncoder(w).Encode(nil)
 	}
-
-	cats := mckcat.GetByID(getID)
-
-	json.NewEncoder(w).Encode(cats)
 }
 
 //Create Func
@@ -50,9 +88,11 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result := mckcat.Create(body)
+	Repo.Connection.Table("CattoHouse").Create(&body)
 
-	json.NewEncoder(w).Encode(result)
+	// result := mckcat.Create(body)
+
+	json.NewEncoder(w).Encode(body)
 }
 
 //Update Func
@@ -60,28 +100,19 @@ func Update(w http.ResponseWriter, r *http.Request) {
 
 	id := mux.Vars(r)["id"]
 
-	getID, err := strconv.Atoi(id)
-
-	if err != nil {
-		log.Print(err.Error())
-		return
-	}
-
 	getBody := json.NewDecoder(r.Body)
 
 	var body cati.Cat
 
-	err = getBody.Decode(&body)
+	err := getBody.Decode(&body)
 	if err != nil {
 		log.Print(err.Error())
 		return
 	}
 
-	body.ID = getID
+	Repo.Connection.Table("CattoHouse").Where("id = ?", id).Updates(body)
 
-	result := mckcat.Update(body, getID)
-
-	json.NewEncoder(w).Encode(result)
+	json.NewEncoder(w).Encode(body)
 }
 
 //Delete Func
@@ -89,14 +120,9 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 
 	id := mux.Vars(r)["id"]
 
-	getID, err := strconv.Atoi(id)
+	Repo.Connection.Table("CattoHouse").Where("id = ?", id).Updates(map[string]interface{}{
+		"isDeleted": true,
+	})
 
-	if err != nil {
-		log.Print(err.Error())
-		return
-	}
-
-	cats := mckcat.Delete(getID)
-
-	json.NewEncoder(w).Encode(cats)
+	w.Write([]byte(id))
 }

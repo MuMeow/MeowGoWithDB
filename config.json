@@ -1,0 +1,11 @@
+{
+    "mysql": {
+        "type":"mysql",
+        "host":"localhost",
+        "port": "3306",
+        "username": "root",
+        "password": "meow1234",
+        "dbname":"meow_test"
+    },
+    "port":"10800"
+}
