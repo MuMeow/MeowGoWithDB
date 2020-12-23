@@ -1,5 +1,10 @@
 package cati
 
+import (
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
+
 //Cat struct
 type Cat struct {
 	ID        string `gorm:"column:id;primary_key" json:"id"`
@@ -7,4 +12,15 @@ type Cat struct {
 	IsDeleted bool   `gorm:"default:false;column:isDeleted" json:"isDeleted"`
 	CreatedAt int64  `gorm:"column:createdAt;autoCreateTime:milli" json:"createdAt"`
 	UpdatedAt int64  `gorm:"column:updatedAt;autoUpdatedTime:milli" json:"updatedAt"`
+}
+
+// BeforeCreate func
+func (cat *Cat) BeforeCreate(db *gorm.DB) error {
+	cat.ID = uuid.New().String()
+	return nil
+}
+
+// TableName func
+func (cat *Cat) TableName() string {
+	return "CattoHouse"
 }

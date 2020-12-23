@@ -1,18 +1,23 @@
 package mckcat
 
-import (
-	cati "MeowGoWithDB/services/cat/interface"
-)
+//Cat struct
+type Cat struct {
+	ID        int    `json:"id"`
+	Name      string `json:"name"`
+	IsDeleted bool   `json:"isDeleted"`
+	CreatedAt int64  `json:"createdAt"`
+	UpdatedAt int64  `json:"updatedAt"`
+}
 
-var dbCat = make([]cati.Cat, 0)
+var dbCat = make([]Cat, 0)
 
 //GetAll func
-func GetAll() (cat []cati.Cat) {
+func GetAll() (cat []Cat) {
 	return dbCat
 }
 
 //GetByID func
-func GetByID(id int) (getCat cati.Cat) {
+func GetByID(id int) (getCat Cat) {
 	for _, data := range dbCat {
 		if data.ID == id {
 			getCat = data
@@ -23,7 +28,7 @@ func GetByID(id int) (getCat cati.Cat) {
 }
 
 //Create func
-func Create(cat cati.Cat) (result string) {
+func Create(cat Cat) (result string) {
 	var duplicate bool
 	for _, data := range dbCat {
 		if data.Name == cat.Name {
@@ -45,7 +50,7 @@ func Create(cat cati.Cat) (result string) {
 }
 
 //Update func
-func Update(cat cati.Cat, id int) (result string) {
+func Update(cat Cat, id int) (result string) {
 	getCatIndex := -1
 
 	for index, data := range dbCat {
