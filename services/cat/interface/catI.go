@@ -11,7 +11,7 @@ type Cat struct {
 	Name      string `gorm:"column:name" json:"name"`
 	IsDeleted bool   `gorm:"default:false;column:isDeleted" json:"isDeleted"`
 	CreatedAt int64  `gorm:"column:createdAt;autoCreateTime:milli" json:"createdAt"`
-	UpdatedAt int64  `gorm:"column:updatedAt;autoUpdatedTime:milli" json:"updatedAt"`
+	UpdatedAt int64  `gorm:"column:updatedAt;autoUpdateTime:milli" json:"updatedAt"`
 }
 
 // BeforeCreate func

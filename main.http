@@ -22,5 +22,5 @@ Content-Type: application/json
 
 ###
 
-DELETE {{Host}}/cats/1 HTTP/1.1
+DELETE {{Host}}/cats/55ba0f92-fe3e-42f6-b557-f86a99b8fd70 HTTP/1.1
 Content-Type: application/json
